@@ -44,11 +44,22 @@ async function run() {
       res.send(result)
     })
     //availabelonly
-      app.get('/uerrooms/availabality',async(req,res)=>{
-        const result = await productCllection.find({availabality :"Available"}).sort({ _id: -1 }).limit(6).toArray();
-        res.send(result)
-        console.log(result)
-    })
+  app.get('/uerrooms/availabality', async (req, res) => {
+  const { searchParams } = req.query;
+
+  let query = { availabality: "Available" };
+
+  if (searchParams) {
+    query.$or = [
+      { title: { $regex: searchParams, $options: "i" } },
+      { price: { $regex: searchParams, $options: "i" } },
+      { location: { $regex: searchParams, $options: "i" } }
+    ];
+  }
+
+  const result = await productCllection.find(query).sort({ _id: -1 }).limit(6).toArray();
+  res.send(result);
+})
 
     // availabality on data 
          //availabelonly on data
